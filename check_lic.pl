@@ -67,7 +67,11 @@ sub Check_lic
 	my ($dbh,$input)=@_;	
 	
 	
-	my $sth = $dbh->prepare( qq|SELECT id,LicStatus  FROM License where LicNUM=?|);
+	my	$sth = $dbh->prepare(  qq{UPDATE License SET LicStatus=-1 WHERE end_lic<NOW()});
+	$sth->execute;
+	
+	
+	$sth = $dbh->prepare( qq|SELECT id,LicStatus  FROM License where LicNUM=?|);
 	$sth->execute($input->{licenseNumber});
 		
 	my $ref;

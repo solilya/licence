@@ -26,4 +26,6 @@ CREATE TABLE License (
 	   
 	   ALTER TABLE License ADD `DeviceInfo`  varchar(255) ; 
 	   
+	   ALTER TABLE License add end_lic DATE;
+	   
 	

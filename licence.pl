@@ -109,6 +109,11 @@ sub Add_form
 <td><INPUT TYPE="text" NAME="WelcomingText" SIZE="35" MAXLENGTH="255"></td></tr>
 <tr><td>Лимит устройств:</td>
 <td><INPUT TYPE="number" NAME="DeviceLimit" SIZE="5" MAXLENGTH="5" value="3"></td></tr>
+<tr><td>Окончание лицензии:</td>
+<td><input name="end_lic" type="text" onfocus="this.select();lcs(this)" value="{$input['beg_date']}"
+	onclick="event.cancelBubble=true;this.select();lcs(this)"></td></tr>
+<tr><td>Генерация пароля:</td>
+<td><INPUT TYPE="checkbox" NAME="psw_gen" checked value=1></td></tr>
 <tr><td>Комментарий:</td>
 <td><INPUT TYPE="text" NAME="Comment" SIZE="35" MAXLENGTH="255"></td></tr>
 </table>
@@ -131,12 +136,12 @@ sub Add
 {
 	my ($dbh)=@_;
 	
+	my $end_lic=undef;
 	my $input;
 	foreach (param())
 	{
 		$input->{$_}=param($_);
 	}
-	
 	
 	
 	my $psw1=sprintf('%.6d', int(rand(999999)));
@@ -152,13 +157,24 @@ sub Add
 		$uuid="$uuid-$r";		
 	}
 	
+	unless ((defined($input->{psw_gen}))and ($input->{psw_gen} == 1))
+	{
+		$psw1='000000';
+		$psw2=$psw1;
+		$psw3=$psw1;
+	}
 	
+	if ((defined($input->{end_lic}))&&($input->{end_lic}!=''))
+	{
+		$end_lic=Convert_date_to_MySQL($input->{end_lic});
+	}
+	else { $input->{end_lic}=''; }
 	
-	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid ) values (?,?,?,?,"$psw1","$psw2","$psw3",?)|);
+	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid,end_lic ) values (?,?,?,?,"$psw1","$psw2","$psw3",?,?)|);
  	
  	
  	
- 	if (!$sth->execute($input->{'CompanyName'},$input->{'Comment'},$input->{'WelcomingText'},$input->{'DeviceLimit'},$uuid))
+ 	if (!$sth->execute($input->{'CompanyName'},$input->{'Comment'},$input->{'WelcomingText'},$input->{'DeviceLimit'},$uuid, $end_lic))
  		{ die("Can not add Licence!");	}		
  	
  	my $id=$sth->{mysql_insertid};
@@ -189,6 +205,8 @@ sub Add
 <td>$uuid</td></tr>
 <tr><td>Пояснительный текст:</td>
 <td>$input->{WelcomingText}</td></tr>
+<tr><td>Окончание лицензии:</td>
+<td>$input->{end_lic}</td></tr>
 <tr><td>Число устройств:</td>
 <td>$input->{'DeviceLimit'}</td></tr>
 <tr><td>Комментарий:</td>
@@ -834,6 +852,8 @@ print <<END
 <HTML>
 <HEAD>
 <TITLE>Управление лицензиями</TITLE>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src='calendar.js' type='text/javascript'></script>
 </HEAD>
 
 <BODY BACKGROUND="" BGCOLOR="#C0c0c0" TEXT="#000000" LINK="#0000ff" VLINK="#800080" ALINK="#ff0000">
