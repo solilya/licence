@@ -110,8 +110,7 @@ sub Add_form
 <tr><td>Лимит устройств:</td>
 <td><INPUT TYPE="number" NAME="DeviceLimit" SIZE="5" MAXLENGTH="5" value="3"></td></tr>
 <tr><td>Окончание лицензии:</td>
-<td><input name="end_lic" type="text" onfocus="this.select();lcs(this)" value="{$input['beg_date']}"
-	onclick="event.cancelBubble=true;this.select();lcs(this)"></td></tr>
+<td><input name="end_lic" type="text" onfocus="this.select();lcs(this)" onclick="event.cancelBubble=true;this.select();lcs(this)"></td></tr>
 <tr><td>Генерация пароля:</td>
 <td><INPUT TYPE="checkbox" NAME="psw_gen" checked value=1></td></tr>
 <tr><td>Комментарий:</td>
@@ -164,11 +163,11 @@ sub Add
 		$psw3=$psw1;
 	}
 	
-	if ((defined($input->{end_lic}))&&($input->{end_lic}!=''))
+	if ((defined($input->{end_lic}))&&($input->{end_lic} ne ''))
 	{
-		$end_lic=Convert_date_to_MySQL($input->{end_lic});
+		$end_lic=&Licence::Convert_date_to_MySQL($input->{end_lic});
 	}
-	else { $input->{end_lic}=''; }
+	else { $end_lic='2040-01-01'; $input->{end_lic}='01.01.2040'; }
 	
 	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid,end_lic ) values (?,?,?,?,"$psw1","$psw2","$psw3",?,?)|);
  	
@@ -253,11 +252,11 @@ END
 	
 print<<END
 <table cellspacing=0 cellpadding=3 border=1>
-<tr valign="top" ><td width=100>Компания</td><td width=100>Номер лицензии</td><td width=100>uuid</td><td width=100>Приветствие</td><td width=100>Комментарий</td><td width=70>Статус лицензии</td><td width=70>Пароль 1</td><td width=70>Пароль 2</td> <td width=70>Пароль 3</td><td width=50> Число устройств</td><td width=150>DeviceInfo</td>
+<tr valign="top" ><td width=100>Компания</td><td width=100>Номер лицензии</td><td width=100>uuid</td><td width=100>Приветствие</td><td width=100>Комментарий</td><td width=70>Статус лицензии</td><td>Длительность лицензии</td><td width=70>Пароль 1</td><td width=70>Пароль 2</td> <td width=70>Пароль 3</td><td width=50> Число устройств</td><td width=150>DeviceInfo</td>
 </tr>
 END
 ;
-	my $sth = $dbh->prepare(  qq{SELECT CompanyName,LicNUM,uuid, WelcomingText,Comment,LicStatus,psw1,psw2,psw3,DeviceInfo,DeviceLimit FROM License order by CompanyName,id ASC} );
+	my $sth = $dbh->prepare(  qq{SELECT CompanyName,LicNUM,uuid, WelcomingText,Comment,LicStatus,psw1,psw2,psw3,DeviceInfo,DeviceLimit,end_lic FROM License order by CompanyName,id ASC} );
 	$sth->execute;	
 	
 	while (my $ref = $sth->fetchrow_hashref) 
@@ -269,6 +268,7 @@ END
 	#	}
 		
 		my $licstatus=&Licence_Status($ref->{LicStatus});	
+		my $date=&Licence::Convert_date_to_HTML($ref->{end_lic});
 		
 		print <<END
 <tr>
@@ -278,6 +278,7 @@ END
 <td>$ref->{WelcomingText}&nbsp;</td>
 <td>$ref->{Comment}&nbsp;</td>
 <td>$licstatus &nbsp;</td>
+<td>$date</td>
 <td>$ref->{psw1}&nbsp;</td>
 <td>$ref->{psw2}&nbsp;</td>
 <td>$ref->{psw3}&nbsp;</td>
@@ -853,7 +854,7 @@ print <<END
 <HEAD>
 <TITLE>Управление лицензиями</TITLE>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src='calendar.js' type='text/javascript'></script>
+<script src='/calendar.js' type='text/javascript'></script>
 </HEAD>
 
 <BODY BACKGROUND="" BGCOLOR="#C0c0c0" TEXT="#000000" LINK="#0000ff" VLINK="#800080" ALINK="#ff0000">

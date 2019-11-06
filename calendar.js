@@ -8,7 +8,7 @@ Gene Bechtold
 http://www.bechtold.biz
 12/11/2011
 
-C РїРѕРјРѕС‰СЊСЋ СЂР°Р·РЅС‹С… РґРѕР±СЂС‹С… Р»СЋРґРµР№:
+C помощью разных добрых людей:
 tullin
  */
 
@@ -82,7 +82,7 @@ var selectedd, selectedm, selectedy;
 
 document.write('<table id="fc" style="position:absolute;z-index:99999;border-collapse:collapse;background:#FFFFFF;border:1px solid #FFD088;display:none;-moz-user-select:none;-khtml-user-select:none;user-select:none;" cellpadding="2">');
 document.write('<tr style="font:bold 13px Arial" onselectstart="return false"><td style="cursor:pointer;font-size:15px" onclick="upmonth(-1)">&laquo;</td><td colspan="5" id="mns" align="center"></td><td align="right" style="cursor:pointer;font-size:15px" onclick="upmonth(1)">&raquo;</td></tr>');
-document.write('<tr style="background:#FF9900;font:12px Arial;color:#FFFFFF"><td align=center>Рџ</td><td align=center>Р’</td><td align=center>РЎ</td><td align=center>Р§</td><td align=center>Рџ</td><td align=center>РЎ</td><td align=center>Р’</td></tr>');
+document.write('<tr style="background:#FF9900;font:12px Arial;color:#FFFFFF"><td align=center>П</td><td align=center>В</td><td align=center>С</td><td align=center>Ч</td><td align=center>П</td><td align=center>С</td><td align=center>В</td></tr>');
 for(var kk=1;kk<=6;kk++) {
 	document.write('<tr>');
 	for(var tt=1;tt<=7;tt++) {
@@ -91,7 +91,7 @@ for(var kk=1;kk<=6;kk++) {
 	}
 	document.write('</tr>');
 }
-document.write('<tr><td colspan="7" align="center" style="cursor:pointer;font:13px Arial;background:#FFC266" onclick="today()">РЎРµРіРѕРґРЅСЏ: '+addnull(sccd,sccm+1,sccy)+'</td></tr>');
+document.write('<tr><td colspan="7" align="center" style="cursor:pointer;font:13px Arial;background:#FFC266" onclick="today()">Сегодня: '+addnull(sccd,sccm+1,sccy)+'</td></tr>');
 document.write('</table>');
 
 document.all?document.attachEvent('onclick',checkClick):document.addEventListener('click',checkClick,false);
@@ -147,7 +147,7 @@ function cs_click(e) {
 	getObj('fc').style.display='none';
 }
 
-var mn=new Array('РЇРЅРІР°СЂСЊ','Р¤РµРІСЂР°Р»СЊ','РњР°СЂС‚','РђРїСЂРµР»СЊ','РњР°Р№','РСЋРЅСЊ','РСЋР»СЊ','РђРІРіСѓСЃС‚','РЎРµРЅС‚СЏР±СЂСЊ','РћРєС‚СЏР±СЂСЊ','РќРѕСЏР±СЂСЊ','Р”РµРєР°Р±СЂСЊ');
+var mn=new Array('Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь');
 var mnn=new Array('31','28','31','30','31','30','31','31','30','31','30','31');
 var mnl=new Array('31','29','31','30','31','30','31','31','30','31','30','31');
 var calvalarr=new Array(42);
