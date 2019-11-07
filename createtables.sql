@@ -28,4 +28,6 @@ CREATE TABLE License (
 	   
 	   ALTER TABLE License add end_lic DATE;
 	   
+	   ALTER TABLE License ADD `Interval` INT; 
+	   
 	

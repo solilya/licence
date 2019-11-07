@@ -92,7 +92,7 @@ sub Activate
 	my ($dbh,$input)=@_;	
 	
 	
-	my $sth = $dbh->prepare(  qq{SELECT CompanyName,LicNUM,uuid, WelcomingText,Comment,LicStatus,psw1,psw2,psw3,DeviceLimit FROM License where uuid=?} );
+	my $sth = $dbh->prepare(  qq{SELECT CompanyName,LicNUM,uuid, WelcomingText,Comment,LicStatus,psw1,psw2,psw3,DeviceLimit,interval FROM License where uuid=?} );
 	$sth->execute($input->{UUID});	
 	
 	if (my $ref = $sth->fetchrow_hashref) 

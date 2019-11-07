@@ -109,6 +109,8 @@ sub Add_form
 <td><INPUT TYPE="text" NAME="WelcomingText" SIZE="35" MAXLENGTH="255"></td></tr>
 <tr><td>Лимит устройств:</td>
 <td><INPUT TYPE="number" NAME="DeviceLimit" SIZE="5" MAXLENGTH="5" value="3"></td></tr>
+<tr><td>Интервал:</td>
+<td><INPUT TYPE="number" NAME="interval" SIZE="5" MAXLENGTH="5" ></td></tr>
 <tr><td>Окончание лицензии:</td>
 <td><input name="end_lic" type="text" onfocus="this.select();lcs(this)" onclick="event.cancelBubble=true;this.select();lcs(this)"></td></tr>
 <tr><td>Генерация пароля:</td>
@@ -169,11 +171,9 @@ sub Add
 	}
 	else { $end_lic='2040-01-01'; $input->{end_lic}='01.01.2040'; }
 	
-	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid,end_lic ) values (?,?,?,?,"$psw1","$psw2","$psw3",?,?)|);
+	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid,end_lic,interval ) values (?,?,?,?,"$psw1","$psw2","$psw3",?,?,?)|); 	
  	
- 	
- 	
- 	if (!$sth->execute($input->{'CompanyName'},$input->{'Comment'},$input->{'WelcomingText'},$input->{'DeviceLimit'},$uuid, $end_lic))
+ 	if (!$sth->execute($input->{'CompanyName'},$input->{'Comment'},$input->{'WelcomingText'},$input->{'DeviceLimit'},$uuid, $end_lic,$input->{interval}))
  		{ die("Can not add Licence!");	}		
  	
  	my $id=$sth->{mysql_insertid};
@@ -204,6 +204,8 @@ sub Add
 <td>$uuid</td></tr>
 <tr><td>Пояснительный текст:</td>
 <td>$input->{WelcomingText}</td></tr>
+<tr><td>Интервал:</td>
+<td>$input->{interval}</td></tr>
 <tr><td>Окончание лицензии:</td>
 <td>$input->{end_lic}</td></tr>
 <tr><td>Число устройств:</td>
