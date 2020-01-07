@@ -171,7 +171,7 @@ sub Add
 	}
 	else { $end_lic='2040-01-01'; $input->{end_lic}='01.01.2040'; }
 	
-	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid,end_lic,interval ) values (?,?,?,?,"$psw1","$psw2","$psw3",?,?,?)|); 	
+	my $sth = $dbh->prepare( qq|INSERT INTO License (CompanyName ,Comment,WelcomingText,DeviceLimit, psw1,psw2,psw3, uuid,end_lic,inter ) values (?,?,?,?,"$psw1","$psw2","$psw3",?,?,?)|); 	
  	
  	if (!$sth->execute($input->{'CompanyName'},$input->{'Comment'},$input->{'WelcomingText'},$input->{'DeviceLimit'},$uuid, $end_lic,$input->{interval}))
  		{ die("Can not add Licence!");	}		
@@ -488,7 +488,7 @@ END
 	print "</table>";
 
 			
-	$sth = $dbh->prepare(  qq{UPDATE License SET LicStatus=0 WHERE id IN($idlist)});
+	$sth = $dbh->prepare(  qq{UPDATE License SET LicStatus=1 WHERE id IN($idlist)});
 	
 	my @id=param('id');
 	$sth->execute;
@@ -584,7 +584,7 @@ END
 		$ref->{$_}=CGI->escapeHTML($ref->{$_});
 	} 
 	
-	
+	my $date=&Licence::Convert_date_to_HTML($ref->{end_lic});
 	print <<END
 <table border=0>
 <tr><td valign="middle">
@@ -598,6 +598,8 @@ END
 <td><INPUT TYPE="text" NAME="WelcomingText" SIZE="35" MAXLENGTH="255"  value="$ref->{WelcomingText}"></td></tr>
 <tr><td>Число устройств:</td>
 <td><INPUT TYPE="text" NAME="DeviceLimit" SIZE="5" MAXLENGTH="5" value="$ref->{DeviceLimit}"></td></tr>
+<tr><td>Окончание лицензии:</td>
+<td><INPUT type="text" name="end_lic" onfocus="this.select();lcs(this)" onclick="event.cancelBubble=true;this.select();lcs(this)" value="$date" ></td></tr>
 <tr><td>Комментарий:</td>
 <td><INPUT TYPE="text" NAME="Comment" SIZE="35" MAXLENGTH="255" value="$ref->{Comment}"   ></td></tr>
 </table>
@@ -660,11 +662,18 @@ sub Update
 
 		$dbh->{RaiseError} = 0;
 		$dbh->{PrintError} = 1;
+		
+		my $end_lic;
+		if ((defined($input->{end_lic}))&&($input->{end_lic} ne ''))
+		{
+			$end_lic=&Licence::Convert_date_to_MySQL($input->{end_lic});
+		}
+		else { $end_lic='2040-01-01'; $input->{end_lic}='01.01.2040'; }
 
-		my $query=qq|UPDATE License SET CompanyName=?, Comment=?, WelcomingText=?, DeviceLimit=? WHERE id=?|;
+		my $query=qq|UPDATE License SET CompanyName=?, Comment=?, WelcomingText=?, DeviceLimit=?, end_lic=? WHERE id=?|;
 		my $sth=$dbh->prepare($query);
 
-		if (!$sth->execute($input->{CompanyName},$input->{Comment},$input->{WelcomingText}, $input->{DeviceLimit}, $input->{id}))
+		if (!$sth->execute($input->{CompanyName},$input->{Comment},$input->{WelcomingText}, $input->{DeviceLimit},  $end_lic, $input->{id}))
 		{
 			$error="Не могу обновить значения полей<BR>";
 		}
@@ -682,6 +691,8 @@ sub Update
 <td>$input->{WelcomingText}</td></tr>
 <tr><td>Число устройств:</td>
 <td>$input->{'DeviceLimit'}</td></tr>
+<tr><td>Окончание лицензии:</td>
+<td>$input->{'end_lic'}</td></tr>
 <tr><td>Комментарий:</td>
 <td>$input->{Comment}</td></tr>
 </table>
